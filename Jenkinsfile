@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        USER = 'cmd'
+        USER = 'Desconocido'
+        API_KEY = 'Desconocida'
     }
     options {
         disableConcurrentBuilds()
@@ -61,33 +62,33 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('http://localhost:8082', 'nexus-key') {
-                        sh 'docker build -t backend-base:latest .'
-                        sh "docker tag backend-base:latest localhost:8082/backend-base:latest"
-                        sh "docker tag backend-base:latest localhost:8082/backend-base:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                        sh 'docker push localhost:8082/backend-base:latest'
-                        sh "docker push localhost:8082/backend-base:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                        sh 'docker build -t proyecto-devops:latest .'
+                        sh "docker tag proyecto-devops:latest localhost:8082/proyecto-devops:latest"
+                        sh "docker tag proyecto-devops:latest localhost:8082/proyecto-devops:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                        sh 'docker push localhost:8082/proyecto-devops:latest'
+                        sh "docker push localhost:8082/proyecto-devops:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                     }
                 }
             }
         }
-        stage('deploy'){
-            steps {
-                script {
+        // stage('deploy'){
+        //     steps {
+        //         script {
                     
-                    if (env.BRANCH_NAME == 'tarea-final') {
-                        ambiente = 'prd'
-                    } else {
-                        ambiente = 'dev'
-                    }
-                    docker.withRegistry('http://localhost:8082', 'nexus-key') {
-                        withCredentials([file(credentialsId: "${ambiente}-env", variable: 'ENV_FILE')]) {
-                            writeFile file: '.env', text: readFile(ENV_FILE)
-                            sh "docker compose pull"
-                            sh "docker compose --env-file .env up -d --force-recreate"
-                        }
-                    }
-                }
-            }
-        }
+        //             if (env.BRANCH_NAME == 'tarea-final') {
+        //                 ambiente = 'prd'
+        //             } else {
+        //                 ambiente = 'dev'
+        //             }
+        //             docker.withRegistry('http://localhost:8082', 'nexus-key') {
+        //                 withCredentials([file(credentialsId: "${ambiente}-env", variable: 'ENV_FILE')]) {
+        //                     writeFile file: '.env', text: readFile(ENV_FILE)
+        //                     sh "docker compose pull"
+        //                     sh "docker compose --env-file .env up -d --force-recreate"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
