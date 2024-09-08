@@ -43,7 +43,7 @@ pipeline {
                             reuseNode true
                         }
                     }
-                    steps {-
+                    steps {
                         withSonarQubeEnv('sonarqube') {
                             sh 'sonar-scanner'
                         }
