@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-base
+  namespace: devops
+data:
+  USERNAME: "Oscar Garrido"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-base
+  namespace: devops
+type: Opaque
+data:
+  KEY: QUFBREtFWTNFU1NFVFI= #APIKEYSECRET
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-base-deployment
+  namespace: devops
+  labels:
+    app: backend-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-base
+  template:
+    metadata:
+      labels:
+        app: backend-base
+    spec:
+      containers:
+      - name: backend-base
+        image: localhost:8082/backend-base:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: backend-base
+              key: USERNAME
+        - name: CREDENCIALES_BD
+          valueFrom:
+            secretKeyRef:
+              name: backend-base
+              key: KEY
+        ports:
+        - containerPort: 3001
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-base-svc
+  namespace: devops
+  labels:
+    app: backend-base
+spec:
+  selector:
+    app: backend-base
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-base-ingress
+  namespace: devops
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /backend-path(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend-base-svc
+            port:
+              number: 80
