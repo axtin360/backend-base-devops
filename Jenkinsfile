@@ -76,7 +76,23 @@ pipeline {
         withCredentials(bindings: [
                       string(credentialsId: 'kubernetes-jenkins', variable: 'api_token')
                       ]) {
-            sh 'kubectl --token $api_token --server  https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml'
+            script {
+                // Verificar si el deployment ya está desplegado en el namespace 'devops'
+                def deploymentExists = sh(
+                    script: "kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true get deployment proyecto-final-deployment -n devops --ignore-not-found",
+                    returnStatus: true
+                )
+                
+                if (deploymentExists == 0) {
+                    // Si el deployment existe, actualizar la imagen en el namespace 'devops'
+                    echo "Deployment existe en el namespace 'devops', actualizando imagen"
+                    sh "kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true set image deployment proyecto-final-deployment proyecto-final=localhost:8082/proyecto-devops:latest"
+                } else {
+                    // Si el deployment no existe, aplicar el archivo YAML en el namespace 'devops'
+                    echo "Deployment no existe en el namespace 'devops', aplicando kubernetes.yaml..."
+                    sh "kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml"
+                }
+            }
           }
 
         }
