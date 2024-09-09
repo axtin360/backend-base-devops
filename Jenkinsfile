@@ -76,7 +76,7 @@ pipeline {
         withCredentials(bindings: [
                       string(credentialsId: 'kubernetes-jenkins', variable: 'api_token')
                       ]) {
-            sh 'kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true get deployment proyecto-final-deployment -n devops --ignore-not-found'
+            sh 'kubectl --token $api_token --server  https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml'
           }
 
         }
