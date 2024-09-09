@@ -33,7 +33,7 @@ pipeline {
                } 
             }
         }
-        /*stage('Code Quality'){
+        stage('Code Quality'){
             stages {
                 stage('SonarQube analysis') {
                     agent {
@@ -57,7 +57,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         stage('delivery'){
             steps {
                 script {
