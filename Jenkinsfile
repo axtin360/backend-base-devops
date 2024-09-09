@@ -71,24 +71,15 @@ pipeline {
                 }
             }
         }
-        // stage('deploy'){
-        //     steps {
-        //         script {
-                    
-        //             if (env.BRANCH_NAME == 'tarea-final') {
-        //                 ambiente = 'prd'
-        //             } else {
-        //                 ambiente = 'dev'
-        //             }
-        //             docker.withRegistry('http://localhost:8082', 'nexus-key') {
-        //                 withCredentials([file(credentialsId: "${ambiente}-env", variable: 'ENV_FILE')]) {
-        //                     writeFile file: '.env', text: readFile(ENV_FILE)
-        //                     sh "docker compose pull"
-        //                     sh "docker compose --env-file .env up -d --force-recreate"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+         stage('deploy kubernetes'){
+             steps {
+        withCredentials(bindings: [
+                      string(credentialsId: 'kubernete-jenkins', variable: 'api_token')
+                      ]) {
+            sh 'kubectl --token $api_token --server  https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml'
+          }
+
+        }
+         }
     }
 }
