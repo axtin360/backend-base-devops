@@ -74,6 +74,7 @@ metadata:
   namespace: devops
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/disable-admission-validation: "true"
 spec:
   ingressClassName: nginx
   rules:
