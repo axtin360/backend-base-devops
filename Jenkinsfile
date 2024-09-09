@@ -74,7 +74,7 @@ pipeline {
          stage('deploy kubernetes'){
              steps {
         withCredentials(bindings: [
-                      string(credentialsId: 'kubernete-jenkins', variable: 'api_token')
+                      string(credentialsId: 'kubernetes-jenkins', variable: 'api_token')
                       ]) {
             sh 'kubectl --token $api_token --server  https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml'
           }
