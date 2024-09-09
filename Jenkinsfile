@@ -86,7 +86,7 @@ pipeline {
                     echo "Deployment existe en el namespace 'devops', actualizando imagen"
                     sh "kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true set image deployment proyecto-final-deployment proyecto-final=localhost:8082/proyecto-devops:latest -n devops"
                 } else {
-                    echo "Deployment no existe en el namespace 'devops', aplicando kubernetes.yaml..."
+                    echo "Deployment no existe en el namespace 'devops', aplicando kubernetes.yaml"
                     sh "kubectl --token $api_token --server https://kubernetes.docker.internal:6443 --insecure-skip-tls-verify=true apply -f kubernetes.yaml"
                 }
             }
