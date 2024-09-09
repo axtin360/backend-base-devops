@@ -35,7 +35,7 @@ spec:
       containers:
       - name: proyecto-final
         image: localhost:8082/proyecto-devops:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         env:
         - name: USER
           valueFrom:
